@@ -3,10 +3,10 @@
 Simulalg is a framework for testing algorithms for the prediction of stock
 algorithms, written in Julia.
 
-If you are a school, see [easy installation instructions](easy_install.md).
-
 
 ##Setup
+
+This will not work in windows. 
 
 You are going to need julia. Apt-get has an out of date version, so:
 
