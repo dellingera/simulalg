@@ -6,36 +6,13 @@ algorithms, written in Julia.
 
 ##Setup
 
-This will not work in windows. 
+Open a terminal, navigate to the install/ folder.
 
-You are going to need julia. Apt-get has an out of date version, so:
+In this folder, you will see apt-get.sh, dnf.sh, and generic.sh.
 
-    sudo add-apt-repository ppa:staticfloat/juliareleases
-    sudo add-apt-repository ppa:staticfloat/julia-deps
-    sudo apt-get update
-    sudo apt-get install julia
-
-For the accurate prediction of stocks, we need a fairly large database. It has
-around 6,100 stocks each going back an average of around 4 years. Compressed
-it's around 200MB. Not too terrible, but github didn't want to host it. So,
-to setup:
-
-    git clone url
-    cd dir
-    chmod +x setup.sh
-    ./setup.sh
-
-Now we need all the dependencies the library needs. Julia has a really
-complicated bundling system, so lets just cheat and do it manually.
-
-    julia
-    #you are now in a julia shell
-    Pkg.add("JSON")
-    Pkg.add("SQLite")
-    Pkg.add("ArgParse")
-    #Ctrl-D to exit
-
-And there you go.
+If you are using a system that has apt-get as a package manager, run ./apt-get.sh. If you are using dnf, ./dnf.sh. If you
+are using some other system, generic.sh will clone the database and install julia packages, but you must first install
+julia and cmake manually.
 
 
 ##Testing Algorithms
