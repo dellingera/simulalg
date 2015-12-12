@@ -79,4 +79,4 @@ By default, it will find:
 
     std, mean, median, range, low, and high.
 
-If you want more analysis, the code lives under lib/scoreHandler.jl.
+If you want more analysis, the analyzing code is under lib/scoreHandler.jl.

@@ -15,5 +15,5 @@ end
 function record(data::Dict) #writes the result of testing to a file, depending on the type of testing
     #we might want some more logic here, whatever
     data = prettyJson(JSON.json(data))
-    writeFile("scores/scores.json", data)
+    writeFile("lib/scores/scores.json", data)
 end

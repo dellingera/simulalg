@@ -10,4 +10,7 @@ mv db.sqlite ../lib/data/db.sqlite
 #now we install julia
 julia insPackages.jl
 
+mkdir lib/scores
+touch lib/scores/leaderboard.txt
+
 echo install complete!

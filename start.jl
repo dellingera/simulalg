@@ -1,3 +1,6 @@
+
+const totalStocks = 6117 #the total amount of stocks in the database
+
 openProcesses = 0
 include("lib/logger.jl")
 log(:blue, "importing modules")
@@ -29,6 +32,7 @@ s = ArgParseSettings("I don't know what this field is for",
     "-s"
         nargs = '?'              # '?' means optional argument
         default = 1000              # this is used when the option is not passed
+        arg_type = Int # only Int arguments allowed
         constant = 1000             # this is used if --opt1 is paseed with no argument
         help = "The amount of iterations to use"
     "-i"
@@ -42,16 +46,24 @@ s = ArgParseSettings("I don't know what this field is for",
         default = "algs"              # this is used when the option is not passed
         constant = "algs"             # this is used if --opt1 is paseed with no argument
         help = "The file the algorithms are in"
+    "-p"
+        nargs = '?'
+        arg_type = Int
+        default = 1
+        constant = 1
+        help = "The amount of cores to utilize"
 end
 
 #and now we call it...
 parsed_args = parse_args(ARGS, s)
 
+const coresToUse = parsed_args["p"]
+log(:cyan, "using $coresToUse cores")
+
 iterNumb = parsed_args["i"]
 log(:cyan, "yielding stock data every $iterNumb days")
 
 testNumb = parsed_args["s"]
-const totalStocks = 6117
 if testNumb == "all"
     testNumb = totalStocks
     iterNumb = 1
@@ -79,17 +91,12 @@ record(dataLog)
 
 log(:green, "finished testing")
 
-#lets give any running processes some time to finish up
-#log(:blue, "let's wait a few seconds...")
-#sleep(5)
-#log(:green, "cool")
-
 #now we want to make the leaderboard
 if testNumb == totalStocks
     makeLeaderBoard("scores/scores.json")
 end
 
 log(:white, "the scores are:")
-log(:white, readall("scores/scores.json"))
+log(:white, readall("lib/scores/scores.json"))
 log(:white, "the best algs are:")
-log(:white, readall("scores/leaderboard.txt"))
+log(:white, readall("lib/scores/leaderboard.txt"))

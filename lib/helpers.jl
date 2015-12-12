@@ -18,13 +18,27 @@ end
 
 function prettyJson(data)
   log(:blue, "pretty formatting data")
-  formattedData = readall(`nodejs lib/makeitpretty.js {{$data}}`)
+  formattedData = "ERROR IN FORMATTING DATA"
+  try
+      formattedData = readall(`nodejs lib/makeitpretty.js {{$data}}`)
+  catch
+      try
+          formattedData = readall(`node lib/makeitpretty.js {{$data}}`)
+      catch
+          log(:magenta, "you need nodejs installed for pretty printing")
+          formattedData = data
+      end
+  end
   log(:green, "finished pretty formatting data")
   return formattedData
 end
 
 function writeFile(file::ASCIIString, data::ASCIIString) #helper function for record, makes writing to a file simpler
     log(:blue, "writing data to $file")
+
+    #let's make sure it exists
+    run(`touch $file`)
+
     file = open(file, "w")
     write(file, data)
     log(:green, "finished writing file")

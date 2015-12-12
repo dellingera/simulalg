@@ -34,4 +34,6 @@ function test(file::AbstractString)
   dataLog[file] = score(results)
 
   log(:green, "finished testing pred alg $file")
+
+  return 0
 end

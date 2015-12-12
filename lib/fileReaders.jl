@@ -9,9 +9,10 @@ function loopdown(dir::AbstractString)
     #cache from the pred will be complete for the hand
 
     log(:blue, "starting looping over all files")
-    for file in array
-      test(file)
-    end
+
+    #because fast
+    multicore_test(array)
+
     log(:green, "finished looping over all files")
 end
 
@@ -28,4 +29,19 @@ function makeArray(dir::AbstractString, array::Array{String,1})
       end
   end
   return array
+end
+
+function multicore_test(array::Array{String,1})
+    runningProcesses = []
+    while length(array) > 1
+        for int in [1:coresToUse;]
+            if length(array) > 1
+                push!(runningProcesses, @spawn test(pop!(array)))
+            end
+        end
+        #so now we have processes running in the background
+        for process in runningProcesses
+            fetch(process)
+        end
+    end
 end

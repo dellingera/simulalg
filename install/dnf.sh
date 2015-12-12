@@ -14,4 +14,7 @@ dnf install cmake
 #now we run the package installer
 julia insPackages.jl
 
+mkdir lib/scores
+touch lib/scores/leaderboard.txt
+
 echo install complete!
