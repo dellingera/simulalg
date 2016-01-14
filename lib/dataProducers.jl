@@ -1,6 +1,6 @@
-function dataProducer()
-    log(:blue, "starting loop over data")
-    for stock in Task(stockProducer)
+function dataProducer(stockIds)
+    producer = @task stockProducer(stockIds)
+    for stock in producer
         stockLength = length(stock)
         if stockLength > 180
             visibleData = []
@@ -21,10 +21,9 @@ function dataProducer()
         end
 
     end
-    log(:green, "finished looping over data")
 end
 
-function stockProducer()
+function stockProducer(stockIds)
 
   #now loop over that list
   for id in list
@@ -36,13 +35,13 @@ function stockProducer()
       #a great language feature we must use a library to implement
       data = data.value
       #now, it's a normal string. Let's make it a list of lists
-      data = map(function (line::String) return split(line, ",") end, split(data, r"\n"))
+      data = map(function (line::AbstractString) return split(line, ",") end, split(data, r"\n"))
 
       #now, for some reason, the first item is blank.
       shift!(data)
 
       #wew yeah I really want an ORM. Anyway:
-      produce(data);
+      produce(data)
     catch e
         #the stock is corrupted, just skip it
     end

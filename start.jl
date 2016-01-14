@@ -60,7 +60,7 @@ parsed_args = parse_args(ARGS, s)
 const coresToUse = parsed_args["p"]
 log(:cyan, "using $coresToUse cores")
 
-iterNumb = parsed_args["i"]
+const iterNumb = parsed_args["i"]
 log(:cyan, "yielding stock data every $iterNumb days")
 
 testNumb = parsed_args["s"]
@@ -98,5 +98,3 @@ end
 
 log(:white, "the scores are:")
 log(:white, readall("lib/scores/scores.json"))
-log(:white, "the best algs are:")
-log(:white, readall("lib/scores/leaderboard.txt"))

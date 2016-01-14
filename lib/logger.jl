@@ -13,6 +13,7 @@ function log(color::Symbol, message::Any)
 
     message = "$indents$message"
     print_with_color(color, message)
+    print_with_color(:black, " $(now())")
     println("")
 
 

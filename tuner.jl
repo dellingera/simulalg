@@ -10,6 +10,7 @@ include("lib/tester.jl") #handles testing of the algorithms
 include("lib/scoreHandler.jl") #takes care of scoring algs and records the results
 include("lib/helpers.jl") #holds convienence functions
 include("lib/converters.jl") #for converting different types
+include("lib/tuning.jl") #holds the actual tuning function
 log(:green, "done importing modules")
 
 #we need the database
@@ -25,28 +26,36 @@ s = ArgParseSettings("I don't know what this field is for",
 #we need to parse out the args
 @add_arg_table s begin
     "-f"
-        help = "The file the algorithms are in"
-    "-l"
+        help = "The file the algorithm is in"
+    "-b"
         arg_type = Int # only Int arguments allowed
         help = "The minimum value to search"
-    "-h"
+    "-t"
         arg_type = Int # only Int arguments allowed
         help = "The maximum value to search"
     "-s"
         arg_type = Int
         help = "The amount of segments to split into while searching"
+    "-i"
+        nargs = '?'
+        default = 3
+        arg_type = Int
+        constant = 3
+        help = "The amount of iterations to use"
 end
+args = parse_args(ARGS, s)
 
-#and now we call it...
-const args = parse_args(ARGS, s)
+const iterNumb = args["i"]
+log(:cyan, "yielding stock data every $iterNumb days")
 
 const totalStocks = 6117
 
-gloabal variable = 0
+#this is what the algorithms reference
+global variable = 0
 
 #dataproducer is expecting a list to loop over
 const list = collect(1:totalStocks)
 
 log(:blue, "starting tuning alg")
 
-tune(parsed_args["f"])
+tune(args["f"], args)

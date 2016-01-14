@@ -2,7 +2,7 @@ function loopdown(dir::AbstractString)
 
     #first, we need a big array of paths to use
     log(:blue, "finding all files to test")
-    array = makeArray(dir, String[])
+    array = makeArray(dir, AbstractString[])
     log(:green, "produced array of testable files")
     #now what that did, is make an array, but all the hand algs are after the
     #pred algs. So that means we can just loop linearly over them, and the
@@ -10,8 +10,9 @@ function loopdown(dir::AbstractString)
 
     log(:blue, "starting looping over all files")
 
-    #because fast
-    multicore_test(array)
+    for alg in array
+        test(alg)
+    end
 
     log(:green, "finished looping over all files")
 end
@@ -29,19 +30,4 @@ function makeArray(dir::AbstractString, array::Array{String,1})
       end
   end
   return array
-end
-
-function multicore_test(array::Array{String,1})
-    runningProcesses = []
-    while length(array) > 1
-        for int in [1:coresToUse;]
-            if length(array) > 1
-                push!(runningProcesses, @spawn test(pop!(array)))
-            end
-        end
-        #so now we have processes running in the background
-        for process in runningProcesses
-            fetch(process)
-        end
-    end
 end
