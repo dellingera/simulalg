@@ -1,6 +1,11 @@
 #first we install julia
-sudo dnf copr enable nalimilan/julia
-sudo yum install julia
+dnf copr enable nalimilan/julia
+yum install julia
+
+#now for whatever other packages we need
+yum install wget
+yum install gzip #check this later
+
 
 #now we download the database
 wget bshstsa.cloudapp.net:8080/simulalg/db.sqlite.gz

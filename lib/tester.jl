@@ -29,9 +29,7 @@ function test(file::AbstractString)
       else
           append!(results, currentResults)
       end
-      log(:blue, "garbage collecting")
       gc()
-      log(:green, "done collecting garbage")
   end
   log(:green, "done collecting processes")
 
