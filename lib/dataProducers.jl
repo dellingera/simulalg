@@ -1,21 +1,49 @@
 function dataProducer(stockIds)
     producer = @task stockProducer(stockIds)
     for stock in producer
+        #stock is a list of csv's
+
+        #lets see if this stock is enough data
         stockLength = length(stock)
-        if stockLength > 180
-            visibleData = []
-            for a in 1:180
-                push!(visibleData, format(stock[1]))
+        if stockLength > c_daysToYield
+
+            #I don't like csv. Let's make it a list of dictionaries
+            stock = map(format, stock)
+
+            #we can yield this one stock numerous times. This is what we are
+            #currently yielding:
+            visibleData = Dict{Any,Any}[]
+
+            #let's shift the days from stock into yeilded stock, until
+            #it is long enough to pass
+            for a in 1:c_daysToYield
+                push!(visibleData, stock[1])
                 shift!(stock)
             end
 
+            #we don't yeild every day, sometimes we wait. We need to keep track
+            #of when we last yielded
             ticker = 0
+
+            #this is for the handling of splits
+            timeout = -1
+
+            #now we just loop until it's all used
             for day in stock
-                push!(visibleData, format(day))
+
+                #if the new data isn't good, skip until it's gone
+                if(filter(visibleData[end]["close"], day["close"]))
+                    timeout = c_daysToYield
+                end
+                timeout = timeout - 1
+
+                push!(visibleData, day)
                 ticker = ticker + 1
-                if ticker == iterNumb
+                if ticker == c_iterNumb
                     ticker = 0
-                    produce(visibleData)
+                    if timeout < 0
+                        produce(visibleData)
+                    end
                 end
             end
         end
@@ -26,7 +54,7 @@ end
 function stockProducer(stockIds)
 
   #now loop over that list
-  for id in list
+  for id in c_list
     try
       data = SQLite.query(db, "SELECT data FROM stocks WHERE id = $id")
       #that's some weird result set

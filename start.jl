@@ -1,5 +1,4 @@
-
-const totalStocks = 6117 #the total amount of stocks in the database
+const c_totalStocks = 6117 #the total amount of stocks in the database
 
 openProcesses = 0
 include("lib/logger.jl")
@@ -15,6 +14,7 @@ include("lib/scoreHandler.jl") #takes care of scoring algs and records the resul
 include("lib/helpers.jl") #holds convienence functions
 include("lib/converters.jl") #for converting different types
 include("lib/leaderboard.jl") #for generating the leaderboard
+include("lib/filter.jl") #for the removal of penny stocks & splits
 log(:green, "done importing modules")
 
 #we need the database
@@ -34,7 +34,7 @@ s = ArgParseSettings("I don't know what this field is for",
         default = 1000              # this is used when the option is not passed
         arg_type = Int # only Int arguments allowed
         constant = 1000             # this is used if --opt1 is paseed with no argument
-        help = "The amount of iterations to use"
+        help = "The amount of stocks to use"
     "-i"
         nargs = '?'              # '?' means optional argument
         default = 3              # this is used when the option is not passed
@@ -52,33 +52,55 @@ s = ArgParseSettings("I don't know what this field is for",
         default = 1
         constant = 1
         help = "The amount of cores to utilize"
+    "-d"
+        nargs = '?'
+        arg_type = Int
+        default = 90
+        constant = 90
+        help = "The amount of days to expose to algorithms"
+    "-m"
+        nargs = '?'
+        arg_type = Float64
+        default = 1.0
+        constant = 1.0
+        help = "The penny stock cut off limit"
 end
 
 #and now we call it...
 parsed_args = parse_args(ARGS, s)
 
-const coresToUse = parsed_args["p"]
-log(:cyan, "using $coresToUse cores")
+const c_coresToUse = parsed_args["p"]
+log(:cyan, "using $c_coresToUse cores")
 
-const iterNumb = parsed_args["i"]
-log(:cyan, "yielding stock data every $iterNumb days")
+const c_daysToYield = parsed_args["d"]
+log(:cyan, "giving $c_daysToYield days to every alg")
+
+const c_minPrice = parsed_args["m"]
+log(:cyan, "penny stocks are defined at $c_minPrice")
+
+
 
 testNumb = parsed_args["s"]
 if testNumb == "all"
-    testNumb = totalStocks
+    testNumb = c_totalStocks
     iterNumb = 1
 else
-    testNumb = makeNumb(testNumb)
-    testNumb = testNumb > totalStocks ? totalStocks : testNumb #how many stocks to loop over during testing?
+    testNumb = testNumb > c_totalStocks ? c_totalStocks : testNumb
+    iterNumb = parsed_args["i"]
 end
+
+const c_testNumb = testNumb
+const c_iterNumb = iterNumb
+
 log(:cyan, "loading $testNumb stocks per alg")
+log(:cyan, "yielding stock data every $c_iterNumb days")
 log(:green, "parsed arguments")
 
 dataLog = Dict() #for storing how well everything did
 
 #we want only a subset of every stock
 #but we want every test to use the same subset
-const list = nonRepeatRand(0, totalStocks, testNumb)
+const c_list = nonRepeatRand(0, c_totalStocks, c_testNumb)
 
 log(:blue, "starting main loop")
 
@@ -91,10 +113,15 @@ record(dataLog)
 
 log(:green, "finished testing")
 
-#now we want to make the leaderboard
-if testNumb == totalStocks
-    makeLeaderBoard("scores/scores.json")
-end
+log(:blue, "scoring stocks")
+#now we score the stocks
+makeLeaderBoard("scores/scores.json")
+log(:green, "stocks scored")
 
 log(:white, "the scores are:")
 log(:white, readall("lib/scores/scores.json"))
+
+println()
+log(:white, "process complete")
+
+end

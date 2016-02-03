@@ -26,6 +26,8 @@ function test(file::AbstractString)
       if(typeof(currentResults) == Int64)
           log(:magenta, "error in testing $(process[1]). The error is:")
           log(:magenta, "$(process[2])")
+      elseif typeof(currentResults) == RemoteException
+          log(:magenta, currentResults)
       else
           append!(results, currentResults)
       end
@@ -70,15 +72,15 @@ function splitListByCores()
     log(:blue, "splitting big list of stocks into little lists")
     #so coresToUse is the amount of cores
     #and list is the amount of lists
-    lengthOfIds = length(list)
-    segment = floor(lengthOfIds/coresToUse)
+    lengthOfIds = length(c_list)
+    segment = floor(lengthOfIds/c_coresToUse)
 
     splitUp = []
 
-    for x in [1:coresToUse;]
+    for x in [1:c_coresToUse;]
         startValue = convert(Int, segment*x-segment+1)
         endValue = convert(Int, segment*x)
-        push!(splitUp, list[startValue:endValue])
+        push!(splitUp, c_list[startValue:endValue])
     end
     log(:green, "done splitting things")
     return splitUp

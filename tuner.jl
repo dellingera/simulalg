@@ -54,7 +54,7 @@ const totalStocks = 6117
 global variable = 0
 
 #dataproducer is expecting a list to loop over
-const list = collect(1:totalStocks)
+const c_list = collect(1:totalStocks)
 
 log(:blue, "starting tuning alg")
 
