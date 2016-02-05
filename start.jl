@@ -113,15 +113,6 @@ record(dataLog)
 
 log(:green, "finished testing")
 
-log(:blue, "scoring stocks")
-#now we score the stocks
-makeLeaderBoard("scores/scores.json")
-log(:green, "stocks scored")
-
-log(:white, "the scores are:")
-log(:white, readall("lib/scores/scores.json"))
 
 println()
 log(:white, "process complete")
-
-end
